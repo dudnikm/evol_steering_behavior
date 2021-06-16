@@ -12,7 +12,7 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
     public static int SCREEN_WIDTH = 500;
     public static int SCREEN_HEIGHT = 500;
     public static int DELAY = 500;
-    public static int SCREEN_UNIT = 25;
+    public static int SCREEN_UNIT = 12;
 
     Timer timer;
     Random r;
@@ -57,7 +57,7 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
 
         //Display agent
         g.setColor(Color.white);
-        g.fillRect(agent.getX(),agent.getY(),12, 12);
+        g.fillRect(agent.getX(),agent.getY(),SCREEN_UNIT, SCREEN_UNIT);
 
         //Display food
         g.setColor(Color.green);
@@ -80,24 +80,33 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
     @Override
     public void actionPerformed(ActionEvent e) {
         moveAgent();
+        checkCollision();
         agent.seek(food);
         repaint();
     }
 
     public void checkCollision(){
-        for(Food f : food){
-            if(f.getX() == agent.getX() && f.getY() == agent.getY())
-                food.remove(f);
+        for(int i = 0; i <food.size();i++){
+            Rectangle foodRect = new Rectangle(food.get(i).getX(),food.get(i).getY(),8,8);
+            Rectangle agentRect = new Rectangle(agent.getX(),agent.getY(),SCREEN_UNIT,SCREEN_UNIT);
+            if(foodRect.intersects(agentRect)){
+                food.remove(i);
+                System.out.println("REMOVING");
+            }
         }
+
     }
 
     public void moveAgent(){
 
         int dX = agent.getTargetX() - agent.getX();
         int dY = agent.getTargetY() - agent.getY();
+        int dir;
         if(dX != 0 || dY != 0) {
-            agent.setX(agent.getX() + dX/10 + 1);
-            agent.setY(agent.getY() + dY/5 + 1);
+            dir = dX/Math.abs(dX);
+            agent.setX(agent.getX() + 5*dir);
+            dir = dY/Math.abs(dY);
+            agent.setY(agent.getY() + 5*dir);
         }
     }
 }
