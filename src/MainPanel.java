@@ -57,7 +57,7 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
 
         //Display agent
         g.setColor(Color.white);
-        g.fillRect(agent.getX(),agent.getY(),SCREEN_UNIT, SCREEN_UNIT);
+        g.fillRect(agent.getX(),agent.getY(),12, 12);
 
         //Display food
         g.setColor(Color.green);
@@ -80,16 +80,24 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
     @Override
     public void actionPerformed(ActionEvent e) {
         moveAgent();
+        agent.seek(food);
         repaint();
+    }
+
+    public void checkCollision(){
+        for(Food f : food){
+            if(f.getX() == agent.getX() && f.getY() == agent.getY())
+                food.remove(f);
+        }
     }
 
     public void moveAgent(){
 
-        int dX = mouseX - agent.getX();
-        int dY = mouseY - agent.getY();
+        int dX = agent.getTargetX() - agent.getX();
+        int dY = agent.getTargetY() - agent.getY();
         if(dX != 0 || dY != 0) {
-            agent.setX(agent.getX() + dX/10);
-            agent.setY(agent.getY() + dY/5);
+            agent.setX(agent.getX() + dX/10 + 1);
+            agent.setY(agent.getY() + dY/5 + 1);
         }
     }
 }
