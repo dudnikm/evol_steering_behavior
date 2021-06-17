@@ -2,14 +2,19 @@ import java.util.ArrayList;
 
 public class Agent {
 
+    public final int MAX_SPEED = 10;
+    public final int ACCELERATION = 1;
+
     private int x;
     private int y;
     private int targetX;
     private int targetY;
+    private int speed;
 
     public Agent(int x, int y){
         this.x = x;
         this.y = y;
+        this.speed = 0;
     }
 
     public int getX() {
@@ -44,6 +49,19 @@ public class Agent {
         this.targetY = targetY;
     }
 
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
+    public void setCoords(int x, int y){
+        this.x = x;
+        this.y = y;
+    }
+
     public void seek(ArrayList<Food> foods){
         targetX = foods.get(0).getX();
         targetY = foods.get(0).getY();
@@ -54,6 +72,12 @@ public class Agent {
                 targetY = food.getY();
             }
         }
+    }
 
+    public void move(){
+        if(speed < MAX_SPEED)
+            speed += ACCELERATION;
+        if(speed > MAX_SPEED)
+            speed = MAX_SPEED;
     }
 }

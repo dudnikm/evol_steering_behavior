@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -11,7 +13,7 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
 
     public static int SCREEN_WIDTH = 500;
     public static int SCREEN_HEIGHT = 500;
-    public static int DELAY = 500;
+    public static int DELAY = 150;
     public static int SCREEN_UNIT = 12;
 
     Timer timer;
@@ -55,10 +57,16 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
 
     public void draw(Graphics g){
 
-        //Display agent
-        g.setColor(Color.white);
-        g.fillRect(agent.getX(),agent.getY(),SCREEN_UNIT, SCREEN_UNIT);
+        Graphics2D g2d = (Graphics2D) g.create();
 
+
+        //Display agent
+        g2d.setColor(Color.white);
+        Rectangle2D agentRect = new Rectangle(agent.getX(),agent.getY(),SCREEN_UNIT, SCREEN_UNIT);
+        //g2d.rotate(Math.toRadians(45));
+        g2d.draw(agentRect);
+        g2d.fill(agentRect);
+        g2d.dispose();
         //Display food
         g.setColor(Color.green);
         for(Food f : food){
@@ -101,12 +109,13 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
 
         int dX = agent.getTargetX() - agent.getX();
         int dY = agent.getTargetY() - agent.getY();
-        int dir;
+        int dirX, dirY;
+        agent.move();
+        System.out.println(agent.getSpeed());
         if(dX != 0 || dY != 0) {
-            dir = dX/Math.abs(dX);
-            agent.setX(agent.getX() + 5*dir);
-            dir = dY/Math.abs(dY);
-            agent.setY(agent.getY() + 5*dir);
+            dirX = dX/Math.abs(dX);
+            dirY = dY/Math.abs(dY);
+            agent.setCoords(agent.getX() + agent.getSpeed()*dirX,agent.getY() + agent.getSpeed()*dirY);
         }
     }
 }
