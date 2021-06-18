@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Agent {
@@ -10,11 +11,15 @@ public class Agent {
     private int targetX;
     private int targetY;
     private int speed;
+    private Color color;
+    private int health;
 
     public Agent(int x, int y){
         this.x = x;
         this.y = y;
         this.speed = 0;
+        this.color = Color.green;
+        this.health = 30;
     }
 
     public int getX() {
@@ -60,6 +65,30 @@ public class Agent {
     public void setCoords(int x, int y){
         this.x = x;
         this.y = y;
+    }
+
+    public Color getColor() {
+        switch (health){
+            case 1: this.color = Color.red; break;
+            case 2: this.color = Color.orange; break;
+            case 3: this.color = Color.yellow; break;
+            case 4: this.color = Color.green; break;
+        }
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public void decreaseHealth(){
+        if(health > 0)
+            this.health -= 1;
+    }
+
+    public void increaseHealth(){
+        if(health < 4)
+            this.health += 1;
     }
 
     public void seek(ArrayList<Food> foods){

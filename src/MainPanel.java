@@ -4,10 +4,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.TimerTask;
 
 public class MainPanel extends JPanel implements MouseMotionListener, ActionListener {
 
@@ -17,6 +17,7 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
     public static int SCREEN_UNIT = 12;
 
     Timer timer;
+    java.util.Timer healthTimer;
     Random r;
     Agent agent;
     ArrayList<Food> food;
@@ -38,6 +39,7 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
     public void start(){
         r = new Random();
         timer = new Timer(DELAY, this);
+        healthTimer = new java.util.Timer();
         agent = new Agent(120,150);
         mouseX = (int)MouseInfo.getPointerInfo().getLocation().getX();
         mouseY = (int)MouseInfo.getPointerInfo().getLocation().getY();
@@ -46,7 +48,12 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
         for(int i = 0; i< 10;i++){
             food.add(new Food(r.nextInt(SCREEN_HEIGHT),r.nextInt(SCREEN_WIDTH)));
         }
-
+        healthTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                agent.decreaseHealth();
+            }
+        }, 500, 500);
         timer.start();
     }
 
@@ -61,7 +68,7 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
 
 
         //Display agent
-        g2d.setColor(Color.white);
+        g2d.setColor(agent.getColor());
         Rectangle2D agentRect = new Rectangle(agent.getX(),agent.getY(),SCREEN_UNIT, SCREEN_UNIT);
         //g2d.rotate(Math.toRadians(45));
         g2d.draw(agentRect);
@@ -99,7 +106,7 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
             Rectangle agentRect = new Rectangle(agent.getX(),agent.getY(),SCREEN_UNIT,SCREEN_UNIT);
             if(foodRect.intersects(agentRect)){
                 food.remove(i);
-                System.out.println("REMOVING");
+                agent.increaseHealth();
             }
         }
 
@@ -113,8 +120,8 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
         agent.move();
         System.out.println(agent.getSpeed());
         if(dX != 0 || dY != 0) {
-            dirX = dX/Math.abs(dX);
-            dirY = dY/Math.abs(dY);
+            dirX = (dX == 0 ? 1 : dX/Math.abs(dX));
+            dirY = (dY == 0 ? 1 : dY/Math.abs(dY));
             agent.setCoords(agent.getX() + agent.getSpeed()*dirX,agent.getY() + agent.getSpeed()*dirY);
         }
     }
