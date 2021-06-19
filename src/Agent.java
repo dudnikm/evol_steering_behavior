@@ -1,41 +1,39 @@
+import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.util.ArrayList;
 
 public class Agent {
 
     public final int MAX_SPEED = 10;
-    public final int ACCELERATION = 1;
+    public final double MAX_FORCE = 0.1;
 
-    private int x;
-    private int y;
+    private Vector2d location;
+    private Vector2d acceleration;
+    private Vector2d velocity;
+    private Vector2d desiredVelocity;
+    Vector2d steer;
+
     private int targetX;
     private int targetY;
-    private int speed;
     private Color color;
     private int health;
 
     public Agent(int x, int y){
-        this.x = x;
-        this.y = y;
-        this.speed = 0;
+        location = new Vector2d(x,y);
+        acceleration = new Vector2d(0,0);
+        velocity = new Vector2d(0,-2);
+        desiredVelocity = new Vector2d();
+        steer = new Vector2d();
         this.color = Color.green;
-        this.health = 30;
+        this.health = 4;
     }
 
-    public int getX() {
-        return x;
+    public double getX() {
+        return location.getX();
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
+    public double getY() {
+        return location.getY();
     }
 
     public int getTargetX() {
@@ -54,18 +52,7 @@ public class Agent {
         this.targetY = targetY;
     }
 
-    public int getSpeed() {
-        return speed;
-    }
 
-    public void setSpeed(int speed) {
-        this.speed = speed;
-    }
-
-    public void setCoords(int x, int y){
-        this.x = x;
-        this.y = y;
-    }
 
     public Color getColor() {
         switch (health){
@@ -87,8 +74,7 @@ public class Agent {
     }
 
     public void increaseHealth(){
-        if(health < 4)
-            this.health += 1;
+        this.health = 4;
     }
 
     public void seek(ArrayList<Food> foods){
@@ -96,17 +82,27 @@ public class Agent {
         targetY = foods.get(0).getY();
 
         for (Food food: foods) {
-            if((Math.pow(this.x - targetX,2) + Math.pow(this.y - targetY,2)) > (Math.pow(this.x - food.getX(),2) + Math.pow(this.y - food.getY(),2))){
+            if((Math.pow(location.getX() - targetX,2) + Math.pow(location.getY() - targetY,2)) > (Math.pow(location.getX() - food.getX(),2) + Math.pow(location.getY() - food.getY(),2))){
                 targetX = food.getX();
                 targetY = food.getY();
             }
         }
+
+        Vector2d target = new Vector2d(targetX,targetY);
+        desiredVelocity.sub(target,location);
+        desiredVelocity.normalize();
+        desiredVelocity.scale(MAX_SPEED);
+
+        steer.sub(desiredVelocity,velocity);
+        //steer.clampMax(MAX_FORCE);
+
+        acceleration.add(steer);
     }
 
     public void move(){
-        if(speed < MAX_SPEED)
-            speed += ACCELERATION;
-        if(speed > MAX_SPEED)
-            speed = MAX_SPEED;
+        velocity.add(acceleration);
+        velocity.clampMax(MAX_SPEED);
+        location.add(velocity);
+        acceleration.set(new Vector2d());
     }
 }

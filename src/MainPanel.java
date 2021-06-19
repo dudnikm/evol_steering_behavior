@@ -2,14 +2,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.TimerTask;
 
-public class MainPanel extends JPanel implements MouseMotionListener, ActionListener {
+import javax.vecmath.Vector2d;
+
+public class MainPanel extends JPanel implements ActionListener {
 
     public static int SCREEN_WIDTH = 500;
     public static int SCREEN_HEIGHT = 500;
@@ -21,17 +21,13 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
     Random r;
     Agent agent;
     ArrayList<Food> food;
-
-    int mouseX;
-    int mouseY;
+    Vector2d v2;
 
 
     public MainPanel(){
         this.setPreferredSize(new Dimension(SCREEN_WIDTH,SCREEN_HEIGHT));
         this.setBackground(Color.black);
         this.setFocusable(true);
-
-        this.addMouseMotionListener(this);
 
         start();
     }
@@ -41,8 +37,6 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
         timer = new Timer(DELAY, this);
         healthTimer = new java.util.Timer();
         agent = new Agent(120,150);
-        mouseX = (int)MouseInfo.getPointerInfo().getLocation().getX();
-        mouseY = (int)MouseInfo.getPointerInfo().getLocation().getY();
 
         food = new ArrayList<>();
         for(int i = 0; i< 10;i++){
@@ -53,7 +47,7 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
             public void run() {
                 agent.decreaseHealth();
             }
-        }, 500, 500);
+        }, 1000, 1000);
         timer.start();
     }
 
@@ -69,7 +63,8 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
 
         //Display agent
         g2d.setColor(agent.getColor());
-        Rectangle2D agentRect = new Rectangle(agent.getX(),agent.getY(),SCREEN_UNIT, SCREEN_UNIT);
+        Polygon agentPoly = new Polygon(new int[] {10,30,50}, new int[] {80,40,80},3);
+        Rectangle2D agentRect = new Rectangle((int)agent.getX(),(int)agent.getY(),SCREEN_UNIT, SCREEN_UNIT);
         //g2d.rotate(Math.toRadians(45));
         g2d.draw(agentRect);
         g2d.fill(agentRect);
@@ -82,19 +77,8 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        mouseX = e.getX();
-        mouseY = e.getY();
-    }
-
-    @Override
     public void actionPerformed(ActionEvent e) {
-        moveAgent();
+        agent.move();
         checkCollision();
         agent.seek(food);
         repaint();
@@ -103,26 +87,31 @@ public class MainPanel extends JPanel implements MouseMotionListener, ActionList
     public void checkCollision(){
         for(int i = 0; i <food.size();i++){
             Rectangle foodRect = new Rectangle(food.get(i).getX(),food.get(i).getY(),8,8);
-            Rectangle agentRect = new Rectangle(agent.getX(),agent.getY(),SCREEN_UNIT,SCREEN_UNIT);
+            Rectangle agentRect = new Rectangle((int)agent.getX(),(int)agent.getY(),SCREEN_UNIT,SCREEN_UNIT);
             if(foodRect.intersects(agentRect)){
                 food.remove(i);
+                spawnFood();
                 agent.increaseHealth();
             }
         }
 
     }
 
+    public void spawnFood(){
+        if(food.size() < 10)
+            food.add(new Food(r.nextInt(SCREEN_HEIGHT),r.nextInt(SCREEN_WIDTH)));
+    }
+
     public void moveAgent(){
 
-        int dX = agent.getTargetX() - agent.getX();
-        int dY = agent.getTargetY() - agent.getY();
-        int dirX, dirY;
+        double dX = agent.getTargetX() - agent.getX();
+        double dY = agent.getTargetY() - agent.getY();
+        double dirX, dirY;
         agent.move();
-        System.out.println(agent.getSpeed());
         if(dX != 0 || dY != 0) {
             dirX = (dX == 0 ? 1 : dX/Math.abs(dX));
             dirY = (dY == 0 ? 1 : dY/Math.abs(dY));
-            agent.setCoords(agent.getX() + agent.getSpeed()*dirX,agent.getY() + agent.getSpeed()*dirY);
+            //agent.setCoords(agent.getX() + agent.getSpeed()*dirX,agent.getY() + agent.getSpeed()*dirY);
         }
     }
 }
