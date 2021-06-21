@@ -9,7 +9,7 @@ public class Agent {
 
     private Vector2d location;
     private Vector2d acceleration;
-    private Vector2d velocity;
+    public Vector2d velocity;
     private Vector2d desiredVelocity;
     Vector2d steer;
 
@@ -104,5 +104,9 @@ public class Agent {
         velocity.clampMax(MAX_SPEED);
         location.add(velocity);
         acceleration.set(new Vector2d());
+    }
+
+    public double getAngle(){
+        return velocity.angle(desiredVelocity);
     }
 }

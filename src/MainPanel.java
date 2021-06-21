@@ -1,13 +1,13 @@
 import javax.swing.*;
+import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.TimerTask;
 
-import javax.vecmath.Vector2d;
 
 public class MainPanel extends JPanel implements ActionListener {
 
@@ -21,7 +21,7 @@ public class MainPanel extends JPanel implements ActionListener {
     Random r;
     Agent agent;
     ArrayList<Food> food;
-    Vector2d v2;
+    Vector2d vector2d;
 
 
     public MainPanel(){
@@ -62,18 +62,37 @@ public class MainPanel extends JPanel implements ActionListener {
 
 
         //Display agent
+
+        //Polygon agentPoly = new Polygon(new int[] {(int)agent.getX(), (int)agent.getX()+SCREEN_UNIT/2, (int)agent.getX()+SCREEN_UNIT},
+        //        new int[] {(int)agent.getY()+SCREEN_UNIT+5, (int)agent.getY(), (int)agent.getY()+SCREEN_UNIT+5},
+        //       3);
+        vector2d = new Vector2d(agent.getX(),0);
+        Polygon agentPoly = new Polygon(new int[] {(int)agent.getX(), (int)(agent.getX()+SCREEN_UNIT/2 + agent.velocity.getX()), (int)agent.getX()+SCREEN_UNIT},
+                new int[] {(int)agent.getY()+SCREEN_UNIT+5, (int)(agent.getY() + agent.velocity.getY()), (int)agent.getY()+SCREEN_UNIT+5},
+                3);
+        AffineTransform at = new AffineTransform();
+
+        at.translate(agent.getX() + SCREEN_UNIT/2,agent.getY() + SCREEN_UNIT/2);
+        System.out.println(vector2d.angle(agent.velocity));
+        at.rotate(vector2d.angle(agent.velocity));
+
+        //Agent's shadow
+        g2d.setColor(Color.gray);
+        g2d.drawPolygon(agentPoly);
+
+        g2d.setTransform(at);
+
         g2d.setColor(agent.getColor());
-        Polygon agentPoly = new Polygon(new int[] {10,30,50}, new int[] {80,40,80},3);
-        Rectangle2D agentRect = new Rectangle((int)agent.getX(),(int)agent.getY(),SCREEN_UNIT, SCREEN_UNIT);
-        //g2d.rotate(Math.toRadians(45));
-        g2d.draw(agentRect);
-        g2d.fill(agentRect);
+        g2d.drawPolygon(agentPoly);
+        //g2d.fill(agentPoly);
         g2d.dispose();
+
         //Display food
         g.setColor(Color.green);
         for(Food f : food){
             g.fillOval(f.getX(),f.getY(),8,8);
         }
+
     }
 
     @Override
@@ -102,16 +121,4 @@ public class MainPanel extends JPanel implements ActionListener {
             food.add(new Food(r.nextInt(SCREEN_HEIGHT),r.nextInt(SCREEN_WIDTH)));
     }
 
-    public void moveAgent(){
-
-        double dX = agent.getTargetX() - agent.getX();
-        double dY = agent.getTargetY() - agent.getY();
-        double dirX, dirY;
-        agent.move();
-        if(dX != 0 || dY != 0) {
-            dirX = (dX == 0 ? 1 : dX/Math.abs(dX));
-            dirY = (dY == 0 ? 1 : dY/Math.abs(dY));
-            //agent.setCoords(agent.getX() + agent.getSpeed()*dirX,agent.getY() + agent.getSpeed()*dirY);
-        }
-    }
 }
