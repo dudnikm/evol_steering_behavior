@@ -6,11 +6,13 @@ public class Agent {
 
     public final int MAX_SPEED = 10;
     public final double MAX_FORCE = 0.1;
+    public final int AGENT_SIZE = 14;
 
     private Vector2d location;
     private Vector2d acceleration;
     public Vector2d velocity;
     private Vector2d desiredVelocity;
+    private Point[] coords;
     Vector2d steer;
 
     private int targetX;
@@ -19,6 +21,12 @@ public class Agent {
     private int health;
 
     public Agent(int x, int y){
+
+        coords = new Point[3];
+        coords[0] = new Point(x,y+AGENT_SIZE);
+        coords[1] = new Point(x+AGENT_SIZE/2,y);
+        coords[2] = new Point(x+AGENT_SIZE,y+AGENT_SIZE);
+
         location = new Vector2d(x,y);
         acceleration = new Vector2d(0,0);
         velocity = new Vector2d(0,-2);
@@ -100,13 +108,19 @@ public class Agent {
     }
 
     public void move(){
+
+        //Change coordinates
+        coords[0].setLocation(location.x,location.y+AGENT_SIZE+5);
+        coords[1].setLocation(location.x+AGENT_SIZE/2,location.y);
+        coords[2].setLocation(location.x+AGENT_SIZE,location.y+AGENT_SIZE+5);
+
         velocity.add(acceleration);
         velocity.clampMax(MAX_SPEED);
         location.add(velocity);
         acceleration.set(new Vector2d());
     }
 
-    public double getAngle(){
-        return velocity.angle(desiredVelocity);
+    public Point[] getCoords() {
+        return coords;
     }
 }
