@@ -71,11 +71,14 @@ public class MainPanel extends JPanel implements ActionListener {
         g2d.setColor(agent.getColor());
         g2d.drawPolygon(agentPoly);
 
+<<<<<<< Updated upstream
         Vector2d vector2 = new Vector2d(SCREEN_WIDTH-10,agent.getY());
 
         g2d.drawOval((int)vector2d.getX(),(int)vector2d.getY(),5,5);
         g2d.drawOval((int)vector2.getX(),(int)vector2.getY(),5,5);
 
+=======
+>>>>>>> Stashed changes
         //Display food
         g.setColor(Color.green);
         for(Food f : food){
@@ -117,7 +120,11 @@ public class MainPanel extends JPanel implements ActionListener {
 
         Vector2d vector2 = new Vector2d(SCREEN_WIDTH-10,agent.getY());
 
+<<<<<<< Updated upstream
         double angle =  Math.atan2(vector2d.getX() - vector2.getX(), vector2.getY() - vector2d.getY());
+=======
+        double angle = (v2.getX() > 0 ? v2.angle(v1) : v2.angle(v1)*-1);
+>>>>>>> Stashed changes
         System.out.println(Math.toDegrees(angle));
 
 
