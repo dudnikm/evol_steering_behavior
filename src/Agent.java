@@ -5,13 +5,13 @@ import java.util.ArrayList;
 public class Agent {
 
     public final int MAX_SPEED = 10;
-    public final double MAX_FORCE = 0.1;
+    public final double MAX_FORCE = 2;
     public final int AGENT_SIZE = 14;
 
     private Vector2d location;
     private Vector2d acceleration;
     public Vector2d velocity;
-    private Vector2d desiredVelocity;
+    public Vector2d desiredVelocity;
     private Point[] coords;
     Vector2d steer;
 
@@ -102,7 +102,7 @@ public class Agent {
         desiredVelocity.scale(MAX_SPEED);
 
         steer.sub(desiredVelocity,velocity);
-        //steer.clampMax(MAX_FORCE);
+        steer.clampMax(MAX_FORCE);
 
         acceleration.add(steer);
     }
@@ -117,7 +117,7 @@ public class Agent {
         velocity.add(acceleration);
         velocity.clampMax(MAX_SPEED);
         location.add(velocity);
-        acceleration.set(new Vector2d());
+        acceleration.set(0,0);
     }
 
     public Point[] getCoords() {
