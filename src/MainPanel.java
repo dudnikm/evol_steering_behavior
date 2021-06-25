@@ -71,16 +71,6 @@ public class MainPanel extends JPanel implements ActionListener {
         g2d.setColor(agent.getColor());
         g2d.drawPolygon(agentPoly);
 
-        Vector2d v2 = agent.velocity;
-
-        AffineTransform at = new AffineTransform();
-        AffineTransform old = g2d.getTransform();
-        at.translate(agent.getX(),agent.getY());
-        g2d.setTransform(at);
-        g2d.drawOval((int)v1.getX(),(int)v1.getY(),5,5);
-        g2d.drawOval((int)v2.getX(),(int)v2.getY(),5,5);
-        g2d.setTransform(old);
-
         //Display food
         g.setColor(Color.green);
         for(Food f : food){
@@ -122,8 +112,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
         Vector2d v2 = agent.velocity;
 
-        double angle = v2.angle(v1);
-        System.out.println(Math.toDegrees(angle));
+        double angle = v2.getX() > 0 ? v2.angle(v1) : v2.angle(v1)*-1;
 
         AffineTransform.getRotateInstance(angle, agent.getX()+SCREEN_UNIT/2, agent.getY()+SCREEN_UNIT/2)
                 .transform(agent.getCoords(),0,rotatedCoords,0,3);
