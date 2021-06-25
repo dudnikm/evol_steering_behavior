@@ -21,7 +21,7 @@ public class MainPanel extends JPanel implements ActionListener {
     Random r;
     Agent agent;
     ArrayList<Food> food;
-    Vector2d vector2d;
+    Vector2d v1;
     Point[] rotatedCoords;
 
 
@@ -71,10 +71,15 @@ public class MainPanel extends JPanel implements ActionListener {
         g2d.setColor(agent.getColor());
         g2d.drawPolygon(agentPoly);
 
-        Vector2d vector2 = new Vector2d(SCREEN_WIDTH-10,agent.getY());
+        Vector2d v2 = agent.velocity;
 
-        g2d.drawOval((int)vector2d.getX(),(int)vector2d.getY(),5,5);
-        g2d.drawOval((int)vector2.getX(),(int)vector2.getY(),5,5);
+        AffineTransform at = new AffineTransform();
+        AffineTransform old = g2d.getTransform();
+        at.translate(agent.getX(),agent.getY());
+        g2d.setTransform(at);
+        g2d.drawOval((int)v1.getX(),(int)v1.getY(),5,5);
+        g2d.drawOval((int)v2.getX(),(int)v2.getY(),5,5);
+        g2d.setTransform(old);
 
         //Display food
         g.setColor(Color.green);
@@ -113,14 +118,12 @@ public class MainPanel extends JPanel implements ActionListener {
     public Polygon getAgentPoly(){
         Polygon polygon = new Polygon();
 
-        vector2d = new Vector2d(agent.getX(),0);
+        v1 = new Vector2d(0,-10);
 
-        Vector2d vector2 = new Vector2d(SCREEN_WIDTH-10,agent.getY());
+        Vector2d v2 = agent.velocity;
 
-        double angle =  Math.atan2(vector2d.getX() - vector2.getX(), vector2.getY() - vector2d.getY());
+        double angle = v2.angle(v1);
         System.out.println(Math.toDegrees(angle));
-
-
 
         AffineTransform.getRotateInstance(angle, agent.getX()+SCREEN_UNIT/2, agent.getY()+SCREEN_UNIT/2)
                 .transform(agent.getCoords(),0,rotatedCoords,0,3);
