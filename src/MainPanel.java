@@ -77,6 +77,23 @@ public class MainPanel extends JPanel implements ActionListener {
             g.fillOval(f.getX(),f.getY(),8,8);
         }
 
+
+        AffineTransform old = g2d.getTransform();
+        AffineTransform at = new AffineTransform();
+        at.translate(agent.getX()+SCREEN_UNIT/2,agent.getY()+SCREEN_UNIT/2);
+        g2d.setTransform(at);
+
+        //Display velocity
+        g2d.setColor(Color.red);
+        g2d.drawOval((int)agent.velocity.getX()*2,(int)agent.velocity.getY()*2,8,8);
+        //Display acceleration
+        g2d.setColor(Color.yellow);
+        g2d.drawOval((int)agent.acceleration.getX()*2,(int)agent.acceleration.getY()*2,8,8);
+        //Display Desired Velocity
+        g2d.setColor(Color.magenta);
+        g2d.drawOval((int)agent.desiredVelocity.getX()*2,(int)agent.desiredVelocity.getY()*2,8,8);
+        g2d.setTransform(old);
+
     }
 
     @Override

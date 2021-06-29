@@ -9,7 +9,7 @@ public class Agent {
     public final int AGENT_SIZE = 14;
 
     private Vector2d location;
-    private Vector2d acceleration;
+    public Vector2d acceleration;
     public Vector2d velocity;
     public Vector2d desiredVelocity;
     private Point[] coords;
