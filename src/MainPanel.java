@@ -98,9 +98,9 @@ public class MainPanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        agent.seek(food);
         agent.move();
         checkCollision();
-        agent.seek(food);
         repaint();
     }
 

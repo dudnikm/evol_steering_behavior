@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Agent {
 
-    public final int MAX_SPEED = 10;
-    public final double MAX_FORCE = 2;
+    public final int MAX_SPEED = 15;
+    public final double MAX_FORCE = 1;
     public final int AGENT_SIZE = 14;
 
     private Vector2d location;
