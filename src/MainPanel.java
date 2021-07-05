@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.TimerTask;
@@ -78,6 +79,14 @@ public class MainPanel extends JPanel implements ActionListener {
         }
 
 
+        debug(g);
+    }
+
+    //Displays info for debugging
+    public void debug(Graphics g){
+
+        Graphics2D g2d = (Graphics2D) g;
+
         AffineTransform old = g2d.getTransform();
         AffineTransform at = new AffineTransform();
         at.translate(agent.getX()+SCREEN_UNIT/2,agent.getY()+SCREEN_UNIT/2);
@@ -89,11 +98,17 @@ public class MainPanel extends JPanel implements ActionListener {
         //Display acceleration
         g2d.setColor(Color.yellow);
         g2d.drawOval((int)agent.acceleration.getX()*2,(int)agent.acceleration.getY()*2,8,8);
+        //Display steering power
+        g2d.setColor(Color.blue);
+        g2d.drawOval((int)agent.steer.getX()*2,(int)agent.steer.getY()*2,8,8);
         //Display Desired Velocity
         g2d.setColor(Color.magenta);
         g2d.drawOval((int)agent.desiredVelocity.getX()*2,(int)agent.desiredVelocity.getY()*2,8,8);
         g2d.setTransform(old);
 
+        //Print Agent's vectors coordinates
+        System.out.printf("Velocity: X = %f, Y = %f \n Acceleration: X = %f, Y = %f \n Steering force: X = %f, Y = %f \n Desired: X = %f, Y = %f \n__________________\n\n",
+                agent.velocity.getX(),agent.velocity.getY(),agent.acceleration.getX(),agent.acceleration.getY(),agent.steer.getX(),agent.steer.getY(),agent.desiredVelocity.getX(),agent.desiredVelocity.getY());
     }
 
     @Override
