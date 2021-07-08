@@ -16,14 +16,15 @@ public class MainPanel extends JPanel implements ActionListener {
     public static int SCREEN_HEIGHT = 500;
     public static int DELAY = 150;
     public static int SCREEN_UNIT = 12;
+    public static int NUMBER_OF_AGENTS = 3;
 
     Timer timer;
     java.util.Timer healthTimer;
     Random r;
-    Agent agent;
     ArrayList<Food> food;
     Vector2d v1;
     Point[] rotatedCoords;
+    Agent[] agents;
 
 
     public MainPanel(){
@@ -38,22 +39,29 @@ public class MainPanel extends JPanel implements ActionListener {
         r = new Random();
         timer = new Timer(DELAY, this);
         healthTimer = new java.util.Timer();
-        agent = new Agent(120,150);
         rotatedCoords = new Point[3];
         rotatedCoords[0] = new Point();
         rotatedCoords[1] = new Point();
         rotatedCoords[2] = new Point();
 
+
+        agents = new Agent[NUMBER_OF_AGENTS];
+        for(int i =0; i< NUMBER_OF_AGENTS;i++)
+            agents[i] = new Agent(r.nextInt(SCREEN_WIDTH),r.nextInt(SCREEN_HEIGHT));
+
         food = new ArrayList<>();
         for(int i = 0; i< 10;i++){
             food.add(new Food(r.nextInt(SCREEN_HEIGHT),r.nextInt(SCREEN_WIDTH)));
         }
-        healthTimer.scheduleAtFixedRate(new TimerTask() {
+
+        //Agent's health decrement
+        /*healthTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 agent.decreaseHealth();
             }
-        }, 1000, 1000);
+        }, 1000, 1000);*/
+
         timer.start();
     }
 
@@ -67,10 +75,12 @@ public class MainPanel extends JPanel implements ActionListener {
         Graphics2D g2d = (Graphics2D) g;
 
         //Display agent
-        Polygon agentPoly = getAgentPoly();
 
-        g2d.setColor(agent.getColor());
-        g2d.drawPolygon(agentPoly);
+        for(Agent agent: agents) {
+            g2d.setColor(agent.getColor());
+            Polygon agentPoly = getAgentPoly(agent);
+            g2d.drawPolygon(agentPoly);
+        }
 
         //Display food
         g.setColor(Color.green);
@@ -79,11 +89,11 @@ public class MainPanel extends JPanel implements ActionListener {
         }
 
 
-        debug(g);
+        //debug(g);
     }
 
     //Displays info for debugging
-    public void debug(Graphics g){
+    /*public void debug(Graphics g){
 
         Graphics2D g2d = (Graphics2D) g;
 
@@ -109,12 +119,14 @@ public class MainPanel extends JPanel implements ActionListener {
         //Print Agent's vectors coordinates
         System.out.printf("Velocity: X = %f, Y = %f \n Acceleration: X = %f, Y = %f \n Steering force: X = %f, Y = %f \n Desired: X = %f, Y = %f \n__________________\n\n",
                 agent.velocity.getX(),agent.velocity.getY(),agent.acceleration.getX(),agent.acceleration.getY(),agent.steer.getX(),agent.steer.getY(),agent.desiredVelocity.getX(),agent.desiredVelocity.getY());
-    }
+    }*/
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        agent.seek(food);
-        agent.move();
+        for(Agent agent: agents) {
+            agent.seek(food);
+            agent.move();
+        }
         checkCollision();
         repaint();
     }
@@ -122,11 +134,13 @@ public class MainPanel extends JPanel implements ActionListener {
     public void checkCollision(){
         for(int i = 0; i <food.size();i++){
             Rectangle foodRect = new Rectangle(food.get(i).getX(),food.get(i).getY(),8,8);
-            Rectangle agentRect = new Rectangle((int)agent.getX(),(int)agent.getY(),SCREEN_UNIT,SCREEN_UNIT);
-            if(foodRect.intersects(agentRect)){
-                food.remove(i);
-                spawnFood();
-                agent.increaseHealth();
+            for(Agent agent:agents) {
+                Rectangle agentRect = new Rectangle((int) agent.getX(), (int) agent.getY(), SCREEN_UNIT, SCREEN_UNIT);
+                if (foodRect.intersects(agentRect)) {
+                    food.remove(i);
+                    spawnFood();
+                    agent.increaseHealth();
+                }
             }
         }
 
@@ -137,7 +151,7 @@ public class MainPanel extends JPanel implements ActionListener {
             food.add(new Food(r.nextInt(SCREEN_HEIGHT),r.nextInt(SCREEN_WIDTH)));
     }
 
-    public Polygon getAgentPoly(){
+    public Polygon getAgentPoly(Agent agent){
         Polygon polygon = new Polygon();
         
         v1 = new Vector2d(0,-10);

@@ -103,9 +103,7 @@ public class Agent {
 
 
         steer.sub(desiredVelocity,velocity);
-        System.out.printf("********************\nSteer: X = %f, Y = %f\n********************\n",steer.getX(),steer.getY());
         steer.clampMax(MAX_FORCE);
-        System.out.printf("********************\nSteer: X = %f, Y = %f\n********************\n",steer.getX(),steer.getY());
 
         acceleration.add(steer);
     }
